@@ -25,6 +25,8 @@ ext {
 }
 
 dependencies {
+//	compile('org.springframework.boot:spring-boot-starter-jdbc:1.2.7.RELEASE')
+    compile('org.hibernate:hibernate-validator:5.2.4.Final')
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -32,10 +34,8 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-//	compile 'com.amazonaws:aws-java-sdk-dynamodb:1.10.8'
-//	compile 'org.socialsignin:spring-data-dynamodb:1.0.2.RELEASE'
 
 //  https://jobs.zalando.com/tech/blog/integrating-amazon-dynamodb-into-your-development-process/?gh_src=4n3gxh1
-    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.10.45'
+    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.10.77'
     compile 'com.github.derjust:spring-data-dynamodb:4.2.0'
 }
