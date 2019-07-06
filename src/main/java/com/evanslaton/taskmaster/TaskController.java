@@ -1,27 +1,26 @@
-//package com.evanslaton.taskmaster;
-//
-//import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-//import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.PostMapping;
-//
-//@Controller
-//public class TaskController {
-//    private DynamoDBMapper dynamoDBMapper;
-//
-//    @Autowired
-//    private AmazonDynamoDB amazonDynamoDB;
-//
-//    @Autowired
-//    TaskRepository taskRepository;
-//
-//    @PostMapping(value="/")
-//    public void addTask() {
-//        Task t = new Task("Walk dog", "Walk the dog", "incomplete");
-//        taskRepository.save(t);
-//
-//        Iterable<Task> l = taskRepository.findAll();
-//        l.forEach(System.out::println);
-//    }
-//}
+package com.evanslaton.taskmaster;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class TaskController {
+
+    @Autowired
+    TaskRepository taskRepository;
+
+    @GetMapping("/tasks")
+    public List<Task> getTasks() {
+        return (List<Task>) taskRepository.findAll();
+    }
+
+    @PostMapping("/tasks")
+    public void createTask(@RequestBody Task task) {
+        taskRepository.save(task);
+    }
+}

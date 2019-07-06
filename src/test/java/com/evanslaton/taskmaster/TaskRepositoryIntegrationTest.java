@@ -10,8 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -20,14 +18,9 @@ import java.util.List;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = SpringConfig.class)
+@SpringBootTest(classes = DynamoDBConfig.class)
 @WebAppConfiguration
-//@ContextConfiguration(classes = SpringConfig.class)
 @ActiveProfiles("local")
-@TestPropertySource(properties = {
-        "amazon.dynamodb.endpoint=",
-        "amazon.aws.accesskey=_____",
-        "amazon.aws.secretkey=_____" })
 public class TaskRepositoryIntegrationTest {
     private DynamoDBMapper dynamoDBMapper;
 
@@ -46,8 +39,10 @@ public class TaskRepositoryIntegrationTest {
         dynamoDBMapper = new DynamoDBMapper(amazonDynamoDB);
         CreateTableRequest tableRequest = dynamoDBMapper.generateCreateTableRequest(Task.class);
         tableRequest.setProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
-        amazonDynamoDB.createTable(tableRequest);
-        dynamoDBMapper.batchDelete((List<Task>)taskRepository.findAll());
+
+//        Add this line if you need to create a table
+//        amazonDynamoDB.createTable(tableRequest);
+        dynamoDBMapper.batchDelete(taskRepository.findAll());
     }
 
     @Test
