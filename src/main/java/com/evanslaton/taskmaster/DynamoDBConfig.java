@@ -1,61 +1,32 @@
 package com.evanslaton.taskmaster;
 
-import com.amazonaws.auth.AWSCredentials;
-//import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-//import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-//import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import org.socialsignin.spring.data.dynamodb.repository.config.EnableDynamoDBRepositories;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
+// https://stackoverflow.com/questions/41850104/what-is-the-alternative-for-amazondynamodbclient-that-got-deprecated
 @Configuration
 @EnableDynamoDBRepositories(basePackages = "com.evanslaton.taskmaster")
 public class DynamoDBConfig {
 
-    @Value("${amazon.dynamodb.endpoint}")
-    private String amazonDynamoDBEndpoint;
-
-    @Value("${amazon.aws.accesskey}")
-    private String amazonAWSAccessKey;
-
-    @Value("${amazon.aws.secretkey}")
-    private String amazonAWSSecretKey;
-
     @Bean
-    public AmazonDynamoDB amazonDynamoDB() {
-        AmazonDynamoDB amazonDynamoDB = new AmazonDynamoDBClient(amazonAWSCredentials());
-
-        if (!StringUtils.isEmpty(amazonDynamoDBEndpoint)) {
-            amazonDynamoDB.setEndpoint(amazonDynamoDBEndpoint);
-        }
-
-        amazonDynamoDB.setRegion(Region.getRegion(Regions.US_WEST_2));
+    public AmazonDynamoDB amazonDynamoDB(AWSCredentialsProvider awsCredentialsProvider) {
+        AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withCredentials(awsCredentialsProvider)
+                .withEndpointConfiguration(new AwsClientBuilder
+                        .EndpointConfiguration("https://dynamodb.us-west-2.amazonaws.com", "us-west-2"))
+                .build();
 
         return amazonDynamoDB;
     }
 
     @Bean
-    public AWSCredentials amazonAWSCredentials() {
-        return new BasicAWSCredentials(amazonAWSAccessKey, amazonAWSSecretKey);
+    public AWSCredentialsProvider awsCredentialsProvider() {
+        return new EnvironmentVariableCredentialsProvider();
     }
-
-//    @Bean
-//    public AmazonDynamoDB amazonDynamoDB(AWSCredentialsProvider awsCredentialsProvider) {
-//        AmazonDynamoDB amazonDynamoDB = AmazonDynamoDBClientBuilder.standard()
-//                .withCredentials(awsCredentialsProvider).build();
-//
-//        return amazonDynamoDB;
-//    }
-//
-//    @Bean
-//    public AWSCredentialsProvider awsCredentialsProvider() {
-//        return new EnvironmentVariableCredentialsProvider();
-//    }
 }
